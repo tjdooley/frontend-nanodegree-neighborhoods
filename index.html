@@ -8,6 +8,13 @@
     <script type="text/javascript" src="js/main.js" defer="defer"></script>
   </head>
   <body>
+
+  <div class="marker-list">
+    <div data-bind="foreach: locations">
+      <div class="restaurant-name" data-bind="click: goToLocation, text: name"></div>
+    </div>
+  </div>
+
 <div id="map-canvas"></div>
   </body>
 </html>

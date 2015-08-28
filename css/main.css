@@ -1,1 +1,17 @@
 html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+
+.marker-list {
+  position: absolute;
+  top: 15%;
+  left: 2%;
+  width: 15%;
+  height: 70%;
+  min-width: 100px;
+  min-height: 300px;
+
+  z-index: 100;
+  background: #FBEEE5;
+  padding: 5px 5px 5px 5px;
+  border-radius: 15px;
+  border: 1px solid black;
+}

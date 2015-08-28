@@ -1,7 +1,13 @@
-  function Location(location) {
-    this.name = location.name;
-    this.latitude = location.latitude;
-    this.longitude = location.longitude;
+  var Location = function(location, map) {
+    var self = this;
+    self.name = location.name;
+    self.latitude = location.latitude;
+    self.longitude = location.longitude;
+    self.map = map;
+
+    self.goToLocation = function() {
+      self.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
+    }
   }
 
   var markers = [
@@ -38,7 +44,7 @@
 
     self.initializeLocations = function() {
       for (marker in markers) {
-        var location = new Location(markers[marker]);
+        var location = new Location(markers[marker], self.map);
         self.createMarker(location);
         self.locations.push(location);
       }
@@ -60,7 +66,6 @@
               infoWindow.open(self.map, this);
               };
         })(mapMarker));
-
     }
 
     google.maps.event.addDomListener(window, 'load', self.initialize());
