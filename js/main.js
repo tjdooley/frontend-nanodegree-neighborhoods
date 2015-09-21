@@ -4,9 +4,33 @@
     self.latitude = location.latitude;
     self.longitude = location.longitude;
     self.map = map;
+    self.marker = null
 
     self.goToLocation = function() {
       self.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
+    }
+
+    self.displayMarker = function(location) {
+      if (self.marker == null) {
+        self.marker = new google.maps.Marker({
+            position: new google.maps.LatLng(location.latitude, location.longitude),
+            animation: google.maps.Animation.DROP,
+            map: self.map,
+            title: location.name,
+            });
+
+        google.maps.event.addListener(self.marker, 'click', self.markerClicked);
+      }
+
+      if (self.marker.getMap() != map) {
+        self.marker.setMap(map);
+      }
+    }
+
+    self.hideMarker = function() {
+      if (self.marker != null) {
+        self.marker.setMap(null);
+      }
     }
   }
 
@@ -50,23 +74,23 @@
       }
     }
 
-    self.createMarker = function(location) {
-      var mapMarker = new google.maps.Marker({
-            position: new google.maps.LatLng(location.latitude, location.longitude),
-            animation: google.maps.Animation.DROP,
-            map: self.map,
-            title: location.name,
-            });
+    // self.createMarker = function(location) {
+    //   var mapMarker = new google.maps.Marker({
+    //         position: new google.maps.LatLng(location.latitude, location.longitude),
+    //         animation: google.maps.Animation.DROP,
+    //         map: self.map,
+    //         title: location.name,
+    //         });
 
-        var contents = '<h3>' + location.name + '</h3>';
+    //     var contents = '<h3>' + location.name + '</h3>';
 
-        google.maps.event.addListener(mapMarker, 'click', (function(mapMarker) {
-            return function(){
-              infoWindow.setContent(contents);
-              infoWindow.open(self.map, this);
-              };
-        })(mapMarker));
-    }
+    //     google.maps.event.addListener(mapMarker, 'click', (function(mapMarker) {
+    //         return function(){
+    //           infoWindow.setContent(contents);
+    //           infoWindow.open(self.map, this);
+    //           };
+    //     })(mapMarker));
+    // }
 
     google.maps.event.addDomListener(window, 'load', self.initialize());
   }
