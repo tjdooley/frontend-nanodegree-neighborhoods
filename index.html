@@ -2,16 +2,25 @@
 <html>
   <head>
     <link href="css/main.css" rel="stylesheet">
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOgSJB5xHudcLUvVSpBPjBULzIS2bHU7E">
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOgSJB5xHudcLUvVSpBPjBULzIS2bHU7E&libraries=places">
     </script>
     <script type="text/javascript" src="js/knockout-3.3.0.js"></script>
     <script type="text/javascript" src="js/main.js" defer="defer"></script>
   </head>
   <body>
 
-  <div class="marker-list">
+  <div class="location-list">
     <div data-bind="foreach: locations">
-      <div class="restaurant-name" data-bind="click: goToLocation, text: name"></div>
+      <div data-bind="click: goToLocation, text: name"></div>
+    </div>
+  </div>
+
+  <div class="searchBar">
+    <div class="row">
+      <div class="col-xs-4"><h1>Location search</h1></div>
+      <div class="col-xs-8">
+        <input type="text" name="search" id="search" placeholder="Search Locations" data-bind="value: searchedName, valueUpdate: 'keyup'" autocomplete="off" autofocus/>
+      </div>
     </div>
   </div>
 

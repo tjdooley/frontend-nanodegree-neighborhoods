@@ -1,29 +1,49 @@
-  var Location = function(location, map) {
+  // Google Map map data
+var googleMap = null;
+var googleService = null;
+
+function initializeGoogleMap() {
+    var mapOptions = {
+        center: { lat: 43.074653, lng: -89.3841669},
+        zoom: 16
+    };
+    googleMap = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    googleService = new google.maps.places.PlacesService(googleMap);
+}
+
+var Location = function(location) {
     var self = this;
     self.name = location.name;
-    self.latitude = location.latitude;
-    self.longitude = location.longitude;
-    self.map = map;
+    self.placeId = location.placeId;
+    self.placeResult = null;
+    self.placeContent = null;
     self.marker = null
 
     self.goToLocation = function() {
-      self.map.panTo(new google.maps.LatLng(this.latitude, this.longitude));
+      googleMap.panTo(self.placeResult.geometry.location);
+      infoWindow.setContent(self.placeContent);
+      infoWindow.open(googleMap, self.marker);
     }
 
-    self.displayMarker = function(location) {
-      if (self.marker == null) {
-        self.marker = new google.maps.Marker({
-            position: new google.maps.LatLng(location.latitude, location.longitude),
-            animation: google.maps.Animation.DROP,
-            map: self.map,
-            title: location.name,
-            });
+    self.displayMarker = function() {
+        if (self.marker == null) {
+            googleService.getDetails({ placeId: self.placeId }, function(place, status) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    self.placeResult = place;
+                    self.marker = new google.maps.Marker({
+                        position: self.placeResult.geometry.location,
+                        animation: google.maps.Animation.DROP,
+                        map: googleMap
+                    });
 
-        google.maps.event.addListener(self.marker, 'click', self.markerClicked);
+                    self.placeContent = "<h3>" + place.name + "</h3>" + "<br />" + place.formatted_address +"<br />" + place.website + "<br />" + place.rating + "<br />" + place.formatted_phone_number
+                    google.maps.event.addListener(self.marker, 'click', self.goToLocation);
+                }
+            });
       }
 
-      if (self.marker.getMap() != map) {
-        self.marker.setMap(map);
+      if (self.marker != null && self.marker.getMap() != googleMap) {
+        self.marker.setMap(googleMap);
       }
     }
 
@@ -32,69 +52,32 @@
         self.marker.setMap(null);
       }
     }
-  }
+}
 
-  var markers = [
+var FinderViewModel = function() {
+    var self = this;
+    self.locations = ko.observableArray();
+    initializeGoogleMap();
+
+    for (marker in markers) {
+        var location = new Location(markers[marker], self.map);
+        location.displayMarker(location);
+        self.locations.push(location);
+    }
+}
+
+var markers = [
     {
       name: "Overture Center for the Arts",
-      latitude: 43.0744015,
-      longitude: -89.3883918
+      placeId: "ChIJC5DyPjhTBogR1LYgsq9pQ4s"
     },
     {
       name: "Madison Children's Museum",
-      latitude: 43.07667,
-      longitude: -89.38439
+      placeId: "ChIJf0C9UkdTBogRQ6v1ecrB8Yk"
     }
-  ];
+];
 
-  function mapViewModel() {
-    var self = this;
-    self.locations = ko.observableArray();
-    self.map;
-
-    self.initialize = function() {
-      self.map = self.createMap();
-      self.initializeLocations();
-    }
-
-    self.createMap = function() {
-      var mapOptions = {
-        center: { lat: 43.074653, lng: -89.3841669},
-        zoom: 16
-      };
-      var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-      return map;
-    }
-
-    self.initializeLocations = function() {
-      for (marker in markers) {
-        var location = new Location(markers[marker], self.map);
-        self.createMarker(location);
-        self.locations.push(location);
-      }
-    }
-
-    // self.createMarker = function(location) {
-    //   var mapMarker = new google.maps.Marker({
-    //         position: new google.maps.LatLng(location.latitude, location.longitude),
-    //         animation: google.maps.Animation.DROP,
-    //         map: self.map,
-    //         title: location.name,
-    //         });
-
-    //     var contents = '<h3>' + location.name + '</h3>';
-
-    //     google.maps.event.addListener(mapMarker, 'click', (function(mapMarker) {
-    //         return function(){
-    //           infoWindow.setContent(contents);
-    //           infoWindow.open(self.map, this);
-    //           };
-    //     })(mapMarker));
-    // }
-
-    google.maps.event.addDomListener(window, 'load', self.initialize());
-  }
-
-  var infoWindow = new google.maps.InfoWindow();
-  ko.applyBindings(new mapViewModel());
+var infoWindow = new google.maps.InfoWindow();
+var viewModel = new FinderViewModel();
+ko.applyBindings(viewModel);
 
