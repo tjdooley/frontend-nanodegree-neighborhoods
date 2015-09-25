@@ -41,16 +41,10 @@ var Location = function(location) {
                 }
             });
       }
-
-      if (self.marker != null && self.marker.getMap() != googleMap) {
-        self.marker.setMap(googleMap);
-      }
     }
 
     self.hideMarker = function() {
-      if (self.marker != null) {
-        self.marker.setMap(null);
-      }
+        self.marker.setVisible(false);
     }
 }
 
@@ -59,8 +53,29 @@ var FinderViewModel = function() {
     self.locations = ko.observableArray();
     initializeGoogleMap();
 
+    self.searchTerm = ko.observable("");
+
+    self.locationsShown = ko.dependentObservable(function() {
+        var matched = new Array();
+        var filter = self.searchTerm().toLowerCase();
+        var tempLocation
+
+        for (var index = 0; index < self.locations().length; index++) {
+            tempLocation = self.locations()[index];
+            if (tempLocation.name.toLowerCase().indexOf(filter) > -1) {
+                matched.push(tempLocation);
+                tempLocation.displayMarker();
+            } else {
+                tempLocation.hideMarker();
+                self.locations()[index].hideMarker();
+            }
+        }
+
+        return matched;
+    }, self);
+
     for (marker in markers) {
-        var location = new Location(markers[marker], self.map);
+        var location = new Location(markers[marker]);
         location.displayMarker(location);
         self.locations.push(location);
     }
