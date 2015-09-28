@@ -3,6 +3,7 @@
 Project 5 of Udacity Front-end Nanodegree Program.  Built a project using Google Maps and Yelp to show interesting places around my hometown of Madison, WI.
 
 ####Instructions
+The application can be accessed here.  http://tjdooley.github.io/frontend-nanodegree-neighborhoods/
 
 Use the Search filter on the left to filter out results.  Clicking on an entry, or on a map marker will bring up information pulled from Google Maps and Yelp
 
