@@ -1,32 +1,20 @@
-html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+#map-canvas {
+  width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0
+  }
 
-.location-list {
-  position: absolute;
-  top: 30%;
-  left: 3%;
-  width: 15%;
-  min-width: 100px;
-  min-height: 200px;
-
-  z-index: 100;
-  background: #E7E5FB;
-  padding: 10px 10px 10px 10px;
-  border-radius: 10px;
+.navbar {
+  max-width: 200px;
+  height: 100%;
 }
 
-.searchBar {
-  position: absolute;
-  top: 2%;
-  left: 3%;
-  width: 15%;
-  height: 6%;
-  min-width: 200px;
-  min-height: 70px;
-
-    z-index: 100;
-  background: #E7E5FB;
-  padding: 10px 10px 10px 10px;
-  border-radius: 10px;
+form {
+  width: 100%;
+  margin-bottom: 10px;
 }
 
-.list-item {}
+li {
+  margin-bottom: 5px;
+}

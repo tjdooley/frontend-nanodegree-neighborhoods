@@ -5,26 +5,31 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOgSJB5xHudcLUvVSpBPjBULzIS2bHU7E&libraries=places">
     </script>
+    <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
+    <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
+
+    <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
     <script type="text/javascript" src="js/knockout-3.3.0.js"></script>
     <script type="text/javascript" src="js/main.js" defer="defer"></script>
   </head>
   <body>
 
-  <div class="location-list">
-    <div data-bind="foreach: locationsShown">
-      <div data-bind="click: goToLocation, text: name"></div>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div id="navbar" class="navbar-collapse">
+      <form class="navbar-left" role="form">
+        <input class="form-control" type="text" name="search" id="search" placeholder="Search Filter" data-bind="value: searchTerm, valueUpdate: 'keyup'" autocomplete="off" autofocus/>
+      </form>
+      <ul class="navbar-left" data-bind="fadein:1000, foreach: locationsShown">
+        <li class="result-item" data-bind="click: goToLocation, text: name, highlight: 100"></li>
+      </ul>
     </div>
-  </div>
-
-  <div class="searchBar">
+  </nav>
+  <div class="container">
     <div class="row">
-      <div class="col-xs-4"><h1>Location search</h1></div>
-      <div class="col-xs-8">
-        <input type="text" name="search" id="search" placeholder="Search Locations" data-bind="value: searchTerm, valueUpdate: 'keyup'" autocomplete="off" autofocus/>
-      </div>
+      <div class="col-xs-12" id="map-canvas"></div>
     </div>
   </div>
 
-<div id="map-canvas"></div>
+
   </body>
 </html>
