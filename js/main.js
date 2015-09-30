@@ -1,7 +1,7 @@
   // Google Map map and Yelp variables
 var googleMap = null;
 var googleService = null;
-var infoWindow;;
+var infoWindow;
 var yelpUrl = "http://api.yelp.com/v2/business/";
 
 //Create the google map and service to query places
@@ -38,12 +38,12 @@ var Location = function(location) {
     };
 
     self.toggleBounce = function() {
-      if (self.marker.getAnimation() != null) {
+      if (self.marker.getAnimation() !== null) {
           self.marker.setAnimation(null);
       } else {
           self.marker.setAnimation(google.maps.Animation.BOUNCE);
       }
-    }
+    };
 
     //Populate the Map Marker and content with information from Google and Yelp
     self.createMarker = function() {
