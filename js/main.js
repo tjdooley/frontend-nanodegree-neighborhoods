@@ -1,16 +1,20 @@
   // Google Map map and Yelp variables
 var googleMap = null;
 var googleService = null;
+var infoWindow;;
 var yelpUrl = "http://api.yelp.com/v2/business/";
 
 //Create the google map and service to query places
-function initializeGoogleMap() {
+function initMap() {
     var mapOptions = {
         center: { lat: 43.074653, lng: -89.3841669},
         zoom: 16
     };
     googleMap = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     googleService = new google.maps.places.PlacesService(googleMap);
+    infoWindow = new google.maps.InfoWindow();
+    var viewModel = new FinderViewModel();
+    ko.applyBindings(viewModel);
 }
 
 //Location object that will store information like name, google Place Id, and Yelp Id
@@ -24,12 +28,22 @@ var Location = function(location) {
     self.placeContent = null;
     self.marker = null;
 
-    //Pan the map to the location and launch the infor window
+    //Pan the map to the location, bounce the marker, and launch the info window
     self.goToLocation = function() {
       googleMap.panTo(self.placeResult.geometry.location);
+      self.toggleBounce();
       infoWindow.setContent(self.placeContent);
       infoWindow.open(googleMap, self.marker);
+      setTimeout(self.toggleBounce, 1400);
     };
+
+    self.toggleBounce = function() {
+      if (self.marker.getAnimation() != null) {
+          self.marker.setAnimation(null);
+      } else {
+          self.marker.setAnimation(google.maps.Animation.BOUNCE);
+      }
+    }
 
     //Populate the Map Marker and content with information from Google and Yelp
     self.createMarker = function() {
@@ -64,6 +78,9 @@ var Location = function(location) {
 
     self.hideMarker = function() {
         self.marker.setVisible(false);
+        if (infoWindow.anchor === self.marker) {
+          infoWindow.close();
+        }
     };
 };
 
@@ -72,12 +89,12 @@ var Location = function(location) {
 var FinderViewModel = function() {
     var self = this;
     self.locations = ko.observableArray();
-    initializeGoogleMap();
+    //initializeGoogleMap();
 
     self.searchTerm = ko.observable("");
 
     //This will apply the search filter as a term is entered
-    self.locationsShown = ko.dependentObservable(function() {
+    self.locationsShown = ko.computed(function() {
         var matched = [];
         var filter = self.searchTerm().toLowerCase();
         var tempLocation;
@@ -130,12 +147,6 @@ var markers = [
     }
 ];
 
-
-//Set up the info window to be used and create the view model
-var infoWindow = new google.maps.InfoWindow();
-var viewModel = new FinderViewModel();
-ko.applyBindings(viewModel);
-
 //The following code is all used to deal with pulling data from Yelp.
 //This was a bit of a challenge since Yelp requires oAuth to be used.
 //I had to scour the web to find a mechanism for doing this.
@@ -181,8 +192,11 @@ function updateContentFromYelp(name, updateContent) {
     'data': parameterMap,
     'cache': true,
     'dataType': 'jsonp',
-    'success': function(data) {
+    success: function(data) {
       updateContent(createYelpWindowHtml(data));
+    },
+    error: function() {
+      updateContent('<br><br><h4>An error occured while retrieving Yelp data.  Please try again later.</h4>');
     }
   });
 }
